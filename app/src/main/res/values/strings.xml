@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Meshdroid</string>
+    <string name="app_full_name" translatable="false">Meshdroid Browser</string>
+
+    <!-- Setup -->
+    <string name="setup_intro">Enter the address of your MeshCentral server. It is stored on this device only.</string>
+    <string name="setup_server_hint">Server address</string>
+    <string name="setup_server_helper">for example mesh.example.org</string>
+    <string name="setup_continue">Continue</string>
+    <string name="setup_invalid_url">Please enter a valid HTTPS address.</string>
+    <string name="setup_https_note">Only HTTPS connections are accepted. Certificate errors abort the connection and cannot be bypassed.</string>
+
+    <!-- Actions -->
+    <string name="action_desktop_view">Desktop view</string>
+    <string name="action_mobile_view">Mobile view</string>
+    <string name="action_theme">Theme</string>
+    <string name="action_reload">Reload</string>
+    <string name="action_home">Home</string>
+    <string name="action_fullscreen">Full screen</string>
+    <string name="action_exit_fullscreen">Exit full screen</string>
+    <string name="action_open_browser">Open in browser</string>
+    <string name="action_clear_session">Sign out and clear data</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_retry">Retry</string>
+    <string name="action_unlock">Unlock</string>
+    <string name="action_switch">Switch</string>
+
+    <!-- View mode -->
+    <string name="view_auto">Automatic (by screen size)</string>
+    <string name="view_desktop">Always desktop</string>
+    <string name="view_mobile">Always mobile</string>
+    <string name="snack_switch_to_desktop">Large screen detected. Switch to desktop view?</string>
+    <string name="snack_switch_to_mobile">Small screen detected. Switch to mobile view?</string>
+
+    <!-- Theme -->
+    <string name="theme_system">Follow system</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <!-- Errors and messages -->
+    <string name="error_title">Cannot reach server</string>
+    <string name="error_body" translatable="false">%1$s</string>
+    <string name="download_started">Download started</string>
+    <string name="download_failed">Download could not be started</string>
+    <string name="download_blob_hint">This file is generated in the browser and cannot be saved from the app. Use \"Open in browser\".</string>
+    <string name="download_foreign_blocked">Download blocked: the file is not hosted on the configured server.</string>
+    <string name="link_blocked">Link blocked for security reasons.</string>
+    <string name="no_app_for_link">No app available for this link.</string>
+    <string name="session_cleared">Session data cleared</string>
+    <string name="clear_session_title">Clear session?</string>
+    <string name="clear_session_message">All cookies, local storage and the cache will be removed. You will have to sign in again.</string>
+
+    <!-- Lock -->
+    <string name="lock_title">Locked</string>
+    <string name="lock_subtitle">Authenticate to open the console</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_save">Save</string>
+    <string name="settings_saved">Saved</string>
+    <string name="settings_view_mode">View</string>
+    <string name="settings_view_mode_summary">Automatic uses the desktop layout from 600dp width — on a foldable that means unfolded.</string>
+    <string name="settings_theme">Appearance</string>
+    <string name="settings_theme_summary">MeshCentral follows the app appearance through prefers-color-scheme.</string>
+    <string name="settings_security">Security</string>
+    <string name="settings_screen_protection">Block screenshots</string>
+    <string name="settings_screen_protection_summary">Prevents screenshots and hides the content in the recent apps overview.</string>
+    <string name="settings_app_lock">Biometric app lock</string>
+    <string name="settings_app_lock_summary">Requires authentication on start and after one minute in the background.</string>
+    <string name="settings_app_lock_unavailable">No biometrics or device PIN configured.</string>
+    <string name="settings_restart_hint">Takes effect after restarting the app.</string>
+    <string name="settings_version">Version %1$s (%2$d)</string>
+</resources>

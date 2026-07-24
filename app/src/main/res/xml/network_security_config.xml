@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sicherheits-Basiskonfiguration:
+  - cleartextTrafficPermitted="false"  -> ausschliesslich HTTPS, kein Downgrade auf HTTP
+  - trust-anchors nur "system"         -> vom Nutzer installierte CAs werden ignoriert.
+                                          Verhindert Mitlesen durch nachtraeglich
+                                          installierte Proxy-/MITM-Zertifikate.
+
+  Wenn die App hinter einer TLS-inspizierenden Firewall laufen MUSS
+  (z. B. Enterprise-Proxy mit eigener CA), zusaetzlich
+  <certificates src="user"/> ergaenzen - siehe SECURITY.md.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

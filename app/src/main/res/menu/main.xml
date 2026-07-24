@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="AlwaysShowAction">
+
+    <item
+        android:id="@+id/action_view_mode"
+        android:icon="@drawable/ic_desktop"
+        android:title="@string/action_desktop_view"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_theme"
+        android:icon="@drawable/ic_theme"
+        android:title="@string/action_theme"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_reload"
+        android:title="@string/action_reload"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_home"
+        android:title="@string/action_home"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_fullscreen"
+        android:title="@string/action_fullscreen"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_open_browser"
+        android:title="@string/action_open_browser"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_clear_session"
+        android:title="@string/action_clear_session"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/settings_title"
+        app:showAsAction="never" />
+</menu>

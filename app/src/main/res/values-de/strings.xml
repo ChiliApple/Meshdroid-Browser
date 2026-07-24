@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Setup -->
+    <string name="setup_intro">Adresse des MeshCentral-Servers eingeben. Sie wird ausschließlich auf diesem Gerät gespeichert.</string>
+    <string name="setup_server_hint">Serveradresse</string>
+    <string name="setup_server_helper">z. B. mesh.example.org</string>
+    <string name="setup_continue">Weiter</string>
+    <string name="setup_invalid_url">Bitte eine gültige HTTPS-Adresse eingeben.</string>
+    <string name="setup_https_note">Es werden ausschließlich HTTPS-Verbindungen akzeptiert. Zertifikatsfehler brechen die Verbindung ab und lassen sich nicht wegklicken.</string>
+
+    <!-- Aktionen -->
+    <string name="action_desktop_view">Desktop-Ansicht</string>
+    <string name="action_mobile_view">Mobil-Ansicht</string>
+    <string name="action_theme">Design</string>
+    <string name="action_reload">Neu laden</string>
+    <string name="action_home">Startseite</string>
+    <string name="action_fullscreen">Vollbild</string>
+    <string name="action_exit_fullscreen">Vollbild beenden</string>
+    <string name="action_open_browser">Im Browser öffnen</string>
+    <string name="action_clear_session">Abmelden und Daten löschen</string>
+    <string name="action_clear">Löschen</string>
+    <string name="action_retry">Erneut versuchen</string>
+    <string name="action_unlock">Entsperren</string>
+    <string name="action_switch">Wechseln</string>
+
+    <!-- Ansicht -->
+    <string name="view_auto">Automatisch (nach Bildschirmgröße)</string>
+    <string name="view_desktop">Immer Desktop</string>
+    <string name="view_mobile">Immer mobil</string>
+    <string name="snack_switch_to_desktop">Großer Bildschirm erkannt. Auf Desktop-Ansicht wechseln?</string>
+    <string name="snack_switch_to_mobile">Kleiner Bildschirm erkannt. Auf Mobil-Ansicht wechseln?</string>
+
+    <!-- Design -->
+    <string name="theme_system">Systemeinstellung</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+
+    <!-- Fehler und Meldungen -->
+    <string name="error_title">Server nicht erreichbar</string>
+    <string name="download_started">Download gestartet</string>
+    <string name="download_failed">Download konnte nicht gestartet werden</string>
+    <string name="download_blob_hint">Diese Datei wird im Browser erzeugt und kann aus der App nicht gespeichert werden. Bitte \"Im Browser öffnen\" verwenden.</string>
+    <string name="download_foreign_blocked">Download blockiert: Die Datei liegt nicht auf dem konfigurierten Server.</string>
+    <string name="link_blocked">Link aus Sicherheitsgründen blockiert.</string>
+    <string name="no_app_for_link">Keine App für diesen Link vorhanden.</string>
+    <string name="session_cleared">Sitzungsdaten gelöscht</string>
+    <string name="clear_session_title">Sitzung löschen?</string>
+    <string name="clear_session_message">Alle Cookies, der lokale Speicher und der Cache werden entfernt. Eine erneute Anmeldung ist nötig.</string>
+
+    <!-- Sperre -->
+    <string name="lock_title">Gesperrt</string>
+    <string name="lock_subtitle">Zum Öffnen der Konsole authentifizieren</string>
+
+    <!-- Einstellungen -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_save">Speichern</string>
+    <string name="settings_saved">Gespeichert</string>
+    <string name="settings_view_mode">Ansicht</string>
+    <string name="settings_view_mode_summary">Automatisch nutzt ab 600dp Breite das Desktop-Layout — beim Foldable also aufgeklappt.</string>
+    <string name="settings_theme">Erscheinungsbild</string>
+    <string name="settings_theme_summary">MeshCentral übernimmt das Erscheinungsbild der App über prefers-color-scheme.</string>
+    <string name="settings_security">Sicherheit</string>
+    <string name="settings_screen_protection">Screenshots blockieren</string>
+    <string name="settings_screen_protection_summary">Verhindert Screenshots und blendet den Inhalt in der App-Übersicht aus.</string>
+    <string name="settings_app_lock">Biometrische App-Sperre</string>
+    <string name="settings_app_lock_summary">Verlangt beim Start und nach einer Minute im Hintergrund eine Authentifizierung.</string>
+    <string name="settings_app_lock_unavailable">Keine Biometrie oder Geräte-PIN eingerichtet.</string>
+    <string name="settings_restart_hint">Wird nach einem Neustart der App wirksam.</string>
+    <string name="settings_version">Version %1$s (%2$d)</string>
+</resources>
