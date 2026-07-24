@@ -1,4 +1,3 @@
-import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -12,21 +11,28 @@ plugins {
 // Die Keystore-Daten kommen entweder aus keystore.properties (lokal, gitignored)
 // oder aus Umgebungsvariablen (CI). Fehlen beide, wird der Release-Build
 // unsigniert erzeugt - der Build bricht NICHT ab.
+//
+// Gelesen wird ueber die providers-API und nicht ueber File/System.getenv:
+// nur so registriert Gradle die Werte als Build-Eingaben. Andernfalls wuerde
+// die Configuration Cache eine alte "kein Keystore"-Konfiguration
+// weiterverwenden, nachdem keystore.properties angelegt wurde.
 // ---------------------------------------------------------------------------
-val keystorePropsFile = rootProject.file("keystore.properties")
 val keystoreProps = Properties().apply {
-    if (keystorePropsFile.exists()) load(FileInputStream(keystorePropsFile))
+    providers.fileContents(
+        rootProject.layout.projectDirectory.file("keystore.properties")
+    ).asText.orNull?.let { load(it.reader()) }
 }
 
 fun signingValue(propKey: String, envKey: String): String? =
-    keystoreProps.getProperty(propKey) ?: System.getenv(envKey)
+    keystoreProps.getProperty(propKey)?.takeIf { it.isNotBlank() }
+        ?: providers.environmentVariable(envKey).orNull?.takeIf { it.isNotBlank() }
 
 val ksPath = signingValue("storeFile", "KEYSTORE_FILE")
 val ksPassword = signingValue("storePassword", "KEYSTORE_PASSWORD")
 val ksAlias = signingValue("keyAlias", "KEY_ALIAS")
 val ksAliasPassword = signingValue("keyPassword", "KEY_PASSWORD")
-val hasSigningConfig = !ksPath.isNullOrBlank() && rootProject.file(ksPath).exists() &&
-    !ksPassword.isNullOrBlank() && !ksAlias.isNullOrBlank() && !ksAliasPassword.isNullOrBlank()
+val hasSigningConfig = ksPath != null && rootProject.file(ksPath).exists() &&
+    ksPassword != null && ksAlias != null && ksAliasPassword != null
 
 android {
     namespace = "com.chiliapple.meshdroid"
@@ -36,8 +42,8 @@ android {
         applicationId = "com.chiliapple.meshdroid"
         minSdk = 29
         targetSdk = 36
-        versionCode = (System.getenv("VERSION_CODE") ?: "1").toInt()
-        versionName = System.getenv("VERSION_NAME") ?: "1.0.0"
+        versionCode = (providers.environmentVariable("VERSION_CODE").orNull ?: "1").toInt()
+        versionName = providers.environmentVariable("VERSION_NAME").orNull ?: "1.0.0"
 
         resourceConfigurations += listOf("en", "de")
     }
