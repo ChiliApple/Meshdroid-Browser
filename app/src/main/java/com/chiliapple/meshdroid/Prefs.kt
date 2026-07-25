@@ -47,6 +47,19 @@ class Prefs(context: Context) {
         get() = ThemeMode.fromKey(sp.getString(KEY_THEME_MODE, null))
         set(value) = sp.edit().putString(KEY_THEME_MODE, value.name).apply()
 
+    /**
+     * Virtuelle Seitenbreite in CSS-Pixeln fuer die Desktop-Ansicht.
+     *
+     * Der WebView rechnet ohne Zutun mit `width=device-width` - auf einem
+     * aufgeklappten Foldable sind das trotz hoher Aufloesung nur rund 690
+     * CSS-Pixel, weil die Pixeldichte hineinrechnet. MeshCentral klappt seine
+     * Navigationsleiste unterhalb von etwa 1000px weg. Die Desktop-Ansicht
+     * ueberschreibt daher das Viewport-Meta auf diesen Wert.
+     */
+    var desktopWidth: Int
+        get() = sp.getInt(KEY_DESKTOP_WIDTH, DEFAULT_DESKTOP_WIDTH)
+        set(value) = sp.edit().putInt(KEY_DESKTOP_WIDTH, value).apply()
+
     /** FLAG_SECURE: blockiert Screenshots und Vorschau in der App-Uebersicht. */
     var screenProtection: Boolean
         get() = sp.getBoolean(KEY_SCREEN_PROTECTION, true)
@@ -67,5 +80,9 @@ class Prefs(context: Context) {
         private const val KEY_THEME_MODE = "theme_mode"
         private const val KEY_SCREEN_PROTECTION = "screen_protection"
         private const val KEY_APP_LOCK = "app_lock"
+        private const val KEY_DESKTOP_WIDTH = "desktop_width"
+
+        const val DEFAULT_DESKTOP_WIDTH = 1280
+        val DESKTOP_WIDTHS = intArrayOf(1024, 1280, 1440)
     }
 }

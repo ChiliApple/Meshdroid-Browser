@@ -219,8 +219,14 @@ class MainActivity : AppCompatActivity() {
                 binding.progress.visibility = View.VISIBLE
             }
 
+            override fun onPageCommitVisible(view: WebView, url: String) {
+                // Frueh genug, um ein sichtbares Umspringen des Layouts zu vermeiden.
+                applyViewportOverride()
+            }
+
             override fun onPageFinished(view: WebView, url: String) {
                 currentUrl = url
+                applyViewportOverride()
                 binding.progress.visibility = View.GONE
                 if (!pageLoadFailed) {
                     binding.errorView.visibility = View.GONE
@@ -333,6 +339,18 @@ class MainActivity : AppCompatActivity() {
         ViewMode.DESKTOP -> true
         ViewMode.MOBILE -> false
         ViewMode.AUTO -> resources.configuration.smallestScreenWidthDp >= LARGE_SCREEN_DP
+    }
+
+    /**
+     * Zwingt die Seite im Desktop-Modus auf eine feste Viewport-Breite.
+     * Im Mobil-Modus passiert nichts - dort gilt das vom Server gelieferte
+     * `width=device-width`.
+     */
+    private fun applyViewportOverride() {
+        if (!appliedDesktopMode) return
+        binding.webView.evaluateJavascript(
+            WebUrl.viewportScript(prefs.desktopWidth), null
+        )
     }
 
     private fun applyUserAgent(desktop: Boolean) {

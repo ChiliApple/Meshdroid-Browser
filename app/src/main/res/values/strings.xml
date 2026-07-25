@@ -62,6 +62,8 @@
     <string name="settings_saved">Saved</string>
     <string name="settings_view_mode">View</string>
     <string name="settings_view_mode_summary">Automatic uses the desktop layout from 600dp width — on a foldable that means unfolded.</string>
+    <string name="settings_desktop_width">Desktop page width (CSS pixels)</string>
+    <string name="settings_desktop_width_summary">MeshCentral collapses its navigation bar on narrow viewports. A larger value shows more, at smaller text. Applies on the next reload.</string>
     <string name="settings_theme">Appearance</string>
     <string name="settings_theme_summary">MeshCentral follows the app appearance through prefers-color-scheme.</string>
     <string name="settings_security">Security</string>

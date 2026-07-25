@@ -90,6 +90,47 @@
                 android:textAppearance="?attr/textAppearanceBodySmall" />
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/settings_desktop_width"
+                android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+            <RadioGroup
+                android:id="@+id/desktopWidthGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/width_1024"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="1024" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/width_1280"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="1280" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/width_1440"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="1440" />
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_desktop_width_summary"
+                android:textAppearance="?attr/textAppearanceBodySmall" />
+
+            <TextView
                 style="@style/SectionHeader"
                 android:text="@string/settings_theme" />
 

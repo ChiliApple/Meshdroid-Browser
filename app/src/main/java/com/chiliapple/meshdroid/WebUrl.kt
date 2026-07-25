@@ -61,6 +61,43 @@ object WebUrl {
     }
 
     /**
+     * Baut das Skript, das die Seite auf eine feste Viewport-Breite zwingt.
+     *
+     * MeshCentral liefert `width=device-width` aus. Ein aufgeklapptes Foldable
+     * kommt damit auf rund 690 CSS-Pixel, worauf MeshCentral seine
+     * Navigationsleiste einklappt - unabhaengig davon, welche Vorlage der Server
+     * schickt. Genau deshalb wirkte der Desktop-Umschalter zuvor folgenlos:
+     * User-Agent und `?mobile=0` bestimmen die Vorlage, nicht die Rechenbreite
+     * des WebViews.
+     *
+     * Dieselbe Technik nutzt Chrome fuer "Desktopseite anfordern".
+     *
+     * Das Skript wird ausschliesslich hier erzeugt, laeuft in eine Richtung und
+     * gibt nichts an die App zurueck - es gibt weiterhin keine JavaScript-Bruecke.
+     */
+    fun viewportScript(widthPx: Int): String = """
+        (function() {
+            var apply = function() {
+                var head = document.head || document.getElementsByTagName('head')[0];
+                if (!head) { return; }
+                var meta = head.querySelector('meta[name="viewport"]');
+                if (!meta) {
+                    meta = document.createElement('meta');
+                    meta.setAttribute('name', 'viewport');
+                    head.appendChild(meta);
+                }
+                var want = 'width=$widthPx';
+                if (meta.getAttribute('content') !== want) {
+                    meta.setAttribute('content', want);
+                }
+            };
+            apply();
+            document.addEventListener('DOMContentLoaded', apply);
+            window.addEventListener('load', apply);
+        })();
+    """.trimIndent()
+
+    /**
      * Normalisiert eine Benutzereingabe zu einer https-Basis-URL.
      * Gibt null zurueck, wenn daraus keine gueltige https-URL mit Host wird.
      */

@@ -38,6 +38,7 @@ class SettingsActivity : AppCompatActivity() {
 
         bindServerUrl()
         bindViewMode()
+        bindDesktopWidth()
         bindThemeMode()
         bindSwitches()
 
@@ -86,6 +87,23 @@ class SettingsActivity : AppCompatActivity() {
                 R.id.view_desktop -> ViewMode.DESKTOP
                 R.id.view_mobile -> ViewMode.MOBILE
                 else -> ViewMode.AUTO
+            }
+        }
+    }
+
+    private fun bindDesktopWidth() {
+        binding.desktopWidthGroup.check(
+            when (prefs.desktopWidth) {
+                1024 -> R.id.width_1024
+                1440 -> R.id.width_1440
+                else -> R.id.width_1280
+            }
+        )
+        binding.desktopWidthGroup.setOnCheckedChangeListener { _, checkedId ->
+            prefs.desktopWidth = when (checkedId) {
+                R.id.width_1024 -> 1024
+                R.id.width_1440 -> 1440
+                else -> Prefs.DEFAULT_DESKTOP_WIDTH
             }
         }
     }

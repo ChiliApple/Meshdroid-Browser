@@ -58,6 +58,8 @@
     <string name="settings_saved">Gespeichert</string>
     <string name="settings_view_mode">Ansicht</string>
     <string name="settings_view_mode_summary">Automatisch nutzt ab 600dp Breite das Desktop-Layout — beim Foldable also aufgeklappt.</string>
+    <string name="settings_desktop_width">Seitenbreite Desktop-Ansicht (CSS-Pixel)</string>
+    <string name="settings_desktop_width_summary">MeshCentral klappt seine Navigationsleiste bei schmalem Viewport ein. Ein größerer Wert zeigt mehr, dafür kleinere Schrift. Wirkt beim nächsten Neuladen.</string>
     <string name="settings_theme">Erscheinungsbild</string>
     <string name="settings_theme_summary">MeshCentral übernimmt das Erscheinungsbild der App über prefers-color-scheme.</string>
     <string name="settings_security">Sicherheit</string>
