@@ -108,6 +108,15 @@ User-Agent auf alle Folgeanfragen ohne Parameter.
 - Ein Wechsel des Erscheinungsbilds erzeugt die Activity neu. Die Sitzung bleibt über die
   Cookies erhalten, die Seite wird aber neu geladen.
 
+## Haftungsausschluss
+
+Nutzung auf eigenes Risiko. Diese Software wird „wie besehen" bereitgestellt, ohne jede
+ausdrückliche oder stillschweigende Gewährleistung (siehe Apache-2.0-Lizenz). Es handelt
+sich um einen eigenständigen, inoffiziellen Client ohne Verbindung zu, Billigung durch oder
+Unterstützung vom MeshCentral-Projekt oder Anthropic. Für die Art der Verbindung und den
+gewählten Server ist der Nutzer selbst verantwortlich. Der Autor übernimmt keine Haftung
+für Schäden, Datenverlust oder Sicherheitsvorfälle, die aus der Nutzung entstehen.
+
 ## Lizenz
 
 [Apache License 2.0](LICENSE) — dieselbe Lizenz wie MeshCentral.

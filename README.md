@@ -121,6 +121,14 @@ Kotlin, AGP 8.13.2, Gradle 8.14.5, `compileSdk`/`targetSdk` 36, `minSdk` 29.
 - Switching appearance recreates the activity. The session persists via cookies, but the
   page reloads.
 
+## Disclaimer
+
+Use at your own risk. This software is provided "as is", without warranty of any kind,
+express or implied (see the Apache 2.0 license). It is an independent, unofficial client
+and has no affiliation with, endorsement by, or support from the MeshCentral project or
+Anthropic. You are responsible for how you connect it and to which server. The author
+accepts no liability for any damage, data loss, or security incident arising from its use.
+
 ## License
 
 [Apache License 2.0](LICENSE) — the same license as MeshCentral.
