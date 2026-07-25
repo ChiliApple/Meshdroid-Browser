@@ -52,6 +52,12 @@
     <string name="lock_subtitle">Zum Öffnen der Konsole authentifizieren</string>
 
     <!-- Einstellungen -->
+    <string name="action_show_topmenu">Navigationsleiste einblenden</string>
+    <string name="action_diagnostics">Diagnose</string>
+    <string name="topmenu_applied">Navigationsleiste eingeblendet</string>
+    <string name="diagnostics_title">Navigations-Diagnose</string>
+    <string name="diagnostics_copy">Kopieren</string>
+    <string name="diagnostics_copied">In Zwischenablage kopiert</string>
     <string name="settings_title">Einstellungen</string>
     <string name="settings_server">Server</string>
     <string name="settings_save">Speichern</string>

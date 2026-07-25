@@ -56,6 +56,12 @@
     <string name="lock_subtitle">Authenticate to open the console</string>
 
     <!-- Settings -->
+    <string name="action_show_topmenu">Show navigation bar</string>
+    <string name="action_diagnostics">Diagnostics</string>
+    <string name="topmenu_applied">Navigation bar shown</string>
+    <string name="diagnostics_title">Navigation diagnostics</string>
+    <string name="diagnostics_copy">Copy</string>
+    <string name="diagnostics_copied">Copied to clipboard</string>
     <string name="settings_title">Settings</string>
     <string name="settings_server">Server</string>
     <string name="settings_save">Save</string>

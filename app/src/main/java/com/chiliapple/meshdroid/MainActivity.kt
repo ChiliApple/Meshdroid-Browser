@@ -31,8 +31,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
+import androidx.webkit.WebSettingsCompat
 import com.chiliapple.meshdroid.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private var appliedDesktopMode: Boolean = false
     private var isFullscreen: Boolean = false
     private var pageLoadFailed: Boolean = false
+    private var desktopScript: androidx.webkit.ScriptHandler? = null
 
     private var filePathCallback: ValueCallback<Array<Uri>>? = null
 
@@ -197,6 +199,10 @@ class MainActivity : AppCompatActivity() {
             setAcceptCookie(true)
             setAcceptThirdPartyCookies(this@with, false)
         }
+
+        // Touch-Spoof VOR dem ersten Laden registrieren, damit StylishUIs
+        // custom.js die Navigation von Anfang an zeigt (beide Ansichtsmodi).
+        registerTouchSpoof()
 
         webViewClient = object : WebViewClient() {
 
@@ -358,6 +364,32 @@ class MainActivity : AppCompatActivity() {
             if (desktop) WebUrl.desktopUserAgent(defaultUserAgent) else defaultUserAgent
     }
 
+    /**
+     * Registriert das DocumentStart-Skript, das StylishUIs Touch-Erkennung
+     * neutralisiert. Laeuft VOR jedem Seitenskript und gilt in beiden
+     * Ansichtsmodi - die Navigation soll immer sichtbar sein, unabhaengig
+     * von Desktop- oder Mobil-Breite. Einmalige Registrierung genuegt, das
+     * Skript wird bei jedem Ladevorgang automatisch erneut ausgefuehrt.
+     */
+    private fun registerTouchSpoof() {
+        if (!WebViewFeature.isFeatureSupported(WebViewFeature.DOCUMENT_START_SCRIPT)) return
+        if (desktopScript != null) return
+        desktopScript = runCatching {
+            WebViewCompat.addDocumentStartJavaScript(
+                binding.webView,
+                WebUrl.desktopSpoofScript,
+                setOf(webOrigin())
+            )
+        }.getOrNull()
+    }
+
+    /** Origin-Muster fuer das DocumentStart-Skript (nur der eigene Server). */
+    private fun webOrigin(): String {
+        val uri = android.net.Uri.parse(prefs.serverUrl)
+        val port = if (uri.port == -1) "" else ":${uri.port}"
+        return "https://${uri.host}$port"
+    }
+
     /** Wendet den Ansichtsmodus an und laedt die aktuelle Seite neu. */
     private fun applyViewMode(desktop: Boolean) {
         appliedDesktopMode = desktop
@@ -468,8 +500,44 @@ class MainActivity : AppCompatActivity() {
         R.id.action_fullscreen -> { setFullscreen(!isFullscreen); invalidateOptionsMenu(); true }
         R.id.action_open_browser -> { openExternally(Uri.parse(currentUrl.ifBlank { prefs.serverUrl })); true }
         R.id.action_clear_session -> { confirmClearSession(); true }
+        R.id.action_diagnostics -> { runDiagnostics(); true }
         R.id.action_settings -> { startActivity(Intent(this, SettingsActivity::class.java)); true }
         else -> super.onOptionsItemSelected(item)
+    }
+
+    /** Blendet MeshCentrals native Tab-Leiste ein (nutzt deren eigene Elemente). */
+    /** Liest die Sichtbarkeit der Navigationselemente aus und zeigt sie als Dialog. */
+    private fun runDiagnostics() {
+        binding.webView.evaluateJavascript(WebUrl.diagnosticsScript) { raw ->
+            val text = decodeJsString(raw)
+            val pretty = prettifyJson(text)
+            AlertDialog.Builder(this)
+                .setTitle(R.string.diagnostics_title)
+                .setMessage(pretty)
+                .setPositiveButton(R.string.diagnostics_copy) { _, _ ->
+                    val cm = getSystemService(android.content.ClipboardManager::class.java)
+                    cm?.setPrimaryClip(android.content.ClipData.newPlainText("meshdroid-diagnostics", pretty))
+                    Snackbar.make(binding.root, R.string.diagnostics_copied, Snackbar.LENGTH_SHORT).show()
+                }
+                .setNegativeButton(android.R.string.ok, null)
+                .show()
+        }
+    }
+
+    /** evaluateJavascript liefert ein JSON-kodiertes Stringliteral - hier entpacken. */
+    private fun decodeJsString(raw: String?): String {
+        if (raw == null || raw == "null") return "(keine Daten)"
+        var s = raw
+        if (s.length >= 2 && s.startsWith("\"") && s.endsWith("\"")) {
+            s = s.substring(1, s.length - 1)
+        }
+        return s.replace("\\\"", "\"").replace("\\\\", "\\").replace("\\n", "\n")
+    }
+
+    private fun prettifyJson(json: String): String = try {
+        org.json.JSONObject(json).toString(2)
+    } catch (_: Exception) {
+        json
     }
 
     private fun confirmClearSession() {

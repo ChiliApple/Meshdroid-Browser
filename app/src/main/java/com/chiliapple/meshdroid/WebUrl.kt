@@ -98,6 +98,121 @@ object WebUrl {
     """.trimIndent()
 
     /**
+     * Skript, das VOR jedem Seitenskript laeuft (DocumentStartJavaScript).
+     *
+     * StylishUIs custom.js entscheidet einmalig beim Laden anhand von
+     * `matchMedia('(pointer: coarse)')` und `navigator.maxTouchPoints`, ob es das
+     * Geraet als mobil einstuft - und blendet dann die gesamte Navigation aus
+     * (Zeile 7: `if (isMobile) return;`). Es gibt keinen Listener, der das spaeter
+     * revidiert.
+     *
+     * Im Desktop-Modus melden wir daher `(pointer: coarse)` als nicht zutreffend
+     * und `maxTouchPoints` als 0. StylishUI laeuft dann als Desktop durch und zeigt
+     * die normale Navigation. Alle anderen Media-Queries - insbesondere
+     * `prefers-color-scheme` fuer den Dark-Mode - bleiben unveraendert.
+     *
+     * Der Eingriff ist bewusst minimal und laeuft in eine Richtung; es entsteht
+     * keine Bruecke von der Seite zur App.
+     */
+    val desktopSpoofScript: String = """
+        (function() {
+            try {
+                var nativeMatchMedia = window.matchMedia.bind(window);
+                window.matchMedia = function(query) {
+                    if (typeof query === 'string' &&
+                        (query.indexOf('pointer: coarse') !== -1 ||
+                         query.indexOf('pointer:coarse') !== -1 ||
+                         query.indexOf('any-pointer: coarse') !== -1 ||
+                         query.indexOf('hover: none') !== -1)) {
+                        var real = nativeMatchMedia(query);
+                        return {
+                            matches: false,
+                            media: query,
+                            onchange: null,
+                            addListener: function() {},
+                            removeListener: function() {},
+                            addEventListener: function() {},
+                            removeEventListener: function() {},
+                            dispatchEvent: function() { return false; }
+                        };
+                    }
+                    return nativeMatchMedia(query);
+                };
+                try {
+                    Object.defineProperty(navigator, 'maxTouchPoints', {
+                        get: function() { return 0; },
+                        configurable: true
+                    });
+                } catch (e) {}
+            } catch (e) {}
+        })();
+    """.trimIndent()
+
+    /**
+     * Liest den Sichtbarkeitszustand der MeshCentral-Navigationselemente aus.
+     * Reines Auslesen fuer die Diagnose - veraendert nichts an der Seite.
+     * Gibt eine JSON-Zeichenkette zurueck (oder "null", wenn Elemente fehlen).
+     */
+    val diagnosticsScript: String = """
+        (function() {
+            function info(id) {
+                var el = document.getElementById(id);
+                if (!el) { return { present: false }; }
+                var cs = getComputedStyle(el);
+                return {
+                    present: true,
+                    display: cs.display,
+                    visibility: cs.visibility,
+                    inlineStyle: el.getAttribute('style') || '',
+                    parentDisplay: el.parentElement ? getComputedStyle(el.parentElement).display : ''
+                };
+            }
+            return JSON.stringify({
+                innerWidth: window.innerWidth,
+                devicePixelRatio: window.devicePixelRatio,
+                bodyClass: document.body ? document.body.className : '',
+                mainMenu: info('MainMenuSpan'),
+                leftbar: info('page_leftbar'),
+                topbar: info('topbar'),
+                columnL: info('column_l')
+            });
+        })();
+    """.trimIndent()
+
+    /**
+     * Blendet MeshCentrals native obere Tab-Leiste (MainMenuSpan) ein.
+     * Nutzt bewusst MeshCentrals eigene Elemente statt eines Nachbaus.
+     * Wird nur wirksam, wenn die Diagnose zeigt, dass das der richtige Hebel ist.
+     */
+    /**
+     * Schaltet MeshCentrals gestapeltes Menue (menu_stack) ab und blendet damit
+     * die normale Navigation ein.
+     *
+     * menu_stack haengt an der localStorage-Variable webPageStackMenu. Der WebView
+     * hat einen eigenen, leeren localStorage - deshalb steht die App standardmaessig
+     * im gestapelten Modus, unabhaengig von der Bildschirmbreite. Aufgerufen wird
+     * MeshCentrals eigene Funktion toggleStackMenu(1); nur falls die fehlt, wird die
+     * Klasse direkt entfernt und der Zustand selbst persistiert.
+     */
+    fun toggleStackMenuScript(): String = """
+        (function() {
+            try {
+                if (typeof toggleStackMenu === 'function') {
+                    toggleStackMenu(1);
+                    return 'native';
+                }
+            } catch (e) {}
+            try {
+                document.body.classList.remove('menu_stack');
+                if (window.localStorage) {
+                    localStorage.setItem('webPageStackMenu', 'false');
+                }
+                return 'fallback';
+            } catch (e) { return 'error:' + e; }
+        })();
+    """.trimIndent()
+
+    /**
      * Normalisiert eine Benutzereingabe zu einer https-Basis-URL.
      * Gibt null zurueck, wenn daraus keine gueltige https-URL mit Host wird.
      */

@@ -37,6 +37,11 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_diagnostics"
+        android:title="@string/action_diagnostics"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_clear_session"
         android:title="@string/action_clear_session"
         app:showAsAction="never" />
