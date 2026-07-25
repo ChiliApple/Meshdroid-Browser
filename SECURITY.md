@@ -1,52 +1,63 @@
-# Sicherheitshinweise
+<!-- Language: **English** · [Deutsch](SECURITY.de.md) -->
 
-## Bedrohungsmodell
+# Security notes
 
-Die App ist eine Fernwartungskonsole. Wer sie öffnet, hat in aller Regel Zugriff auf
-fremde Systeme. Entsprechend gilt die Sitzung selbst als das schützenswerte Gut —
-nicht die App.
+## Threat model
 
-Abgedeckt:
+The app is a remote-management console. Whoever opens it usually has access to other
+people's systems. The session itself is therefore the asset worth protecting — not the app.
 
-- Abhören oder Manipulation der Verbindung im Netz
-- Weiterleitung der Sitzung auf einen fremden Host
-- Auslesen der Sitzung durch andere Apps oder über Cloud-Backups
-- Fremder Zugriff auf ein unbeaufsichtigtes, entsperrtes Gerät
+Covered:
 
-Nicht abgedeckt:
+- Eavesdropping or tampering with the connection on the network
+- Redirecting the session to a foreign host
+- Other apps or cloud backups reading the session
+- Someone accessing an unattended, unlocked device
 
-- Kompromittierter MeshCentral-Server
-- Gerootetes oder anderweitig kompromittiertes Android-System
-- Angreifer, die Geräte-PIN und Biometrie kennen
+Not covered:
 
-## Umsetzung
+- A compromised MeshCentral server
+- A rooted or otherwise compromised Android system
+- An attacker who knows the device PIN and biometrics
 
-| Maßnahme | Ort |
+## Implementation
+
+| Measure | Where |
 |---|---|
-| Nur HTTPS, kein Klartext | `res/xml/network_security_config.xml`, `usesCleartextTraffic="false"` |
-| Nur System-CAs, keine Benutzerzertifikate | `network_security_config.xml` |
-| Zertifikatsfehler nicht überschreibbar | `MainActivity` — `onReceivedSslError` bewusst nicht implementiert |
-| Kein Mixed Content | `MIXED_CONTENT_NEVER_ALLOW` |
-| Navigation nur zum konfigurierten Host | `WebUrl.isSameServer()`, `shouldOverrideUrlLoading` |
-| Gesperrte Schemata (`javascript:`, `file:`, `content:`, `data:`, `intent:`) | `MainActivity.openExternally()` |
-| Keine JavaScript-Bridge | `addJavascriptInterface` wird nirgends aufgerufen |
-| Kein Datei-/Content-Zugriff aus dem WebView | `allowFileAccess`, `allowContentAccess` = false |
-| Keine Popups, keine Mehrfachfenster | `javaScriptCanOpenWindowsAutomatically` = false |
-| Kamera, Mikrofon, Standort abgelehnt | `onPermissionRequest`, `onGeolocationPermissionsShowPrompt` |
-| Kein Cloud-Backup der Sitzung | `allowBackup="false"`, `data_extraction_rules.xml` |
-| Screenshot- und Übersichtsschutz | `FLAG_SECURE`, standardmäßig aktiv |
-| Biometrische Sperre | `AppLock`, opt-in, Sperre nach 60 s im Hintergrund |
-| Kein WebView-Remote-Debugging im Release | `App.kt`, nur bei `BuildConfig.DEBUG` |
-| Downloads nur vom konfigurierten Host | `MainActivity.handleDownload()` |
-| Sitzungsdaten beim Serverwechsel verworfen | `SettingsActivity.bindServerUrl()` |
+| HTTPS only, no cleartext | `res/xml/network_security_config.xml`, `usesCleartextTraffic="false"` |
+| System CAs only, no user certificates | `network_security_config.xml` |
+| Certificate errors not overridable | `MainActivity` — `onReceivedSslError` deliberately not implemented |
+| No mixed content | `MIXED_CONTENT_NEVER_ALLOW` |
+| Navigation limited to the configured host | `WebUrl.isSameServer()`, `shouldOverrideUrlLoading` |
+| Blocked schemes (`javascript:`, `file:`, `content:`, `data:`, `intent:`) | `MainActivity.openExternally()` |
+| No JavaScript bridge | `addJavascriptInterface` is never called |
+| Touch spoof is one-way | `DocumentStartJavaScript` injects a script; nothing is returned to the app |
+| No file/content access from the WebView | `allowFileAccess`, `allowContentAccess` = false |
+| No popups, no multiple windows | `javaScriptCanOpenWindowsAutomatically` = false |
+| Camera, microphone, location denied | `onPermissionRequest`, `onGeolocationPermissionsShowPrompt` |
+| No cloud backup of the session | `allowBackup="false"`, `data_extraction_rules.xml` |
+| Screenshot and recents protection | `FLAG_SECURE`, on by default |
+| Biometric lock | `AppLock`, opt-in, locks after 60 s in the background |
+| No WebView remote debugging in release | `App.kt`, only under `BuildConfig.DEBUG` |
+| Downloads only from the configured host | `MainActivity.handleDownload()` |
+| Session data wiped on server change | `SettingsActivity.bindServerUrl()` |
 
-## Betrieb hinter einem TLS-inspizierenden Proxy
+## The touch spoof and its scope
 
-Standardmäßig vertraut die App ausschließlich den System-CAs. Steht eine Firewall im Weg,
-die TLS aufbricht und mit eigener CA neu signiert, schlägt jede Verbindung fehl — beabsichtigt,
-denn genau dieser Fall ist von außen nicht von einem Angriff zu unterscheiden.
+To make the navigation visible on foldables, the app injects a `DocumentStartJavaScript`
+that overrides `window.matchMedia` for `(pointer: coarse)` / `(hover: none)` and
+`navigator.maxTouchPoints`. This is scoped to the configured origin only and runs one-way —
+it exposes no callback from the page back into the app, so it is not a JavaScript bridge.
+It touches nothing else; `prefers-color-scheme` and every other media query pass through
+unchanged.
 
-Wer das braucht, ergänzt in `res/xml/network_security_config.xml`:
+## Running behind a TLS-inspecting proxy
+
+By default the app trusts system CAs only. If a firewall sits in the path that breaks TLS
+and re-signs with its own CA, every connection fails — by design, because from the outside
+that case is indistinguishable from an attack.
+
+If you need it, add to `res/xml/network_security_config.xml`:
 
 ```xml
 <trust-anchors>
@@ -55,17 +66,15 @@ Wer das braucht, ergänzt in `res/xml/network_security_config.xml`:
 </trust-anchors>
 ```
 
-Damit akzeptiert die App jedes vom Nutzer installierte Zertifikat. Besser ist es, nur die
-eine benötigte CA einzupinnen, statt den Benutzerspeicher pauschal zu öffnen.
+That makes the app accept any user-installed certificate. Better to pin just the one CA you
+need rather than opening the user store wholesale.
 
-## Signaturschlüssel
+## Signing key
 
-Die APKs sind selbstsigniert. Der Schlüssel gehört in einen Passwortmanager und in die
-Repository-Secrets — nicht ins Repository. Geht er verloren, lässt sich keine App-Aktualisierung
-mehr installieren; dann hilft nur Deinstallieren und Neuinstallieren, was alle App-Daten
-mitsamt Sitzung entfernt.
+The APKs are self-signed. The key belongs in a password manager and in the repository
+secrets — not in the repository. If it is lost, no app update can be installed; the only
+way out is uninstall and reinstall, which removes all app data including the session.
 
-## Lücken melden
+## Reporting
 
-Fehler mit Sicherheitsbezug bitte per privatem Security Advisory melden, nicht als
-öffentliches Issue.
+Please report security-relevant issues via a private security advisory, not a public issue.

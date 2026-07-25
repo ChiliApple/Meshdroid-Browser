@@ -1,62 +1,85 @@
+<!-- Language: **English** · [Deutsch](README.de.md) -->
+
 # Meshdroid Browser
 
-Ein schlanker, gehärteter Android-Client für [MeshCentral](https://github.com/Ylianst/MeshCentral).
+A lean, hardened Android client for [MeshCentral](https://github.com/Ylianst/MeshCentral).
 
-MeshCentral bringt selbst nur eine Weboberfläche und einen Android-**Agent** mit — eine
-Admin-App gibt es nicht. Diese App schließt die Lücke: Sie kapselt die MeshCentral-Weboberfläche
-in einem eigenständigen, abgesicherten WebView mit Umschaltern für Desktop-/Mobil-Ansicht und
-Erscheinungsbild, ausgelegt auf Foldables.
+MeshCentral ships only a web interface and an Android **agent** — there is no admin app.
+This app fills that gap: it wraps the MeshCentral web interface in a dedicated, hardened
+WebView with toggles for desktop/mobile view and appearance, built for foldables.
 
-> Kein offizielles Projekt und in keiner Weise mit MeshCentral oder Anthropic verbunden.
+> Not an official project and in no way affiliated with MeshCentral or Anthropic.
 
 ---
 
-## Funktionen
+## Features
 
 | | |
 |---|---|
-| **Desktop ⇄ Mobil** | Ein Tap in der Toolbar. Nutzt den offiziellen `?mobile=0/1`-Override von MeshCentral plus passenden User-Agent. |
-| **Hell / Dunkel / System** | MeshCentral folgt über `prefers-color-scheme` automatisch dem App-Design. |
-| **Foldable-tauglich** | Auf- und Zuklappen erzeugt die Activity nicht neu — Anmeldung und laufende Remote-Sitzung bleiben bestehen. |
-| **Automatik-Ansicht** | Ab 600dp Breite wird die Desktop-Ansicht vorgeschlagen — nie erzwungen, immer per Rückfrage. |
-| **Vollbild** | Blendet Toolbar und Systemleisten aus, Rückkehr über eine dezente Schaltfläche. |
-| **Datei-Upload** | Über den System-Dateiauswahldialog, z. B. für den MeshCentral-Dateimanager. |
-| **App-Sperre** | Optionale biometrische Sperre mit Geräte-PIN als Rückfallebene. |
+| **Desktop ⇄ Mobile** | One tap in the toolbar. Sets a fixed viewport width so MeshCentral doesn't collapse into its mobile layout. |
+| **Light / Dark / System** | MeshCentral follows the app appearance automatically via `prefers-color-scheme`. |
+| **Foldable-ready** | Folding and unfolding does not recreate the activity — the login and any running remote session survive. |
+| **Navigation always visible** | StylishUI hides all navigation on touch devices; the app neutralises that so the navigation shows on the Fold too (see below). |
+| **Full screen** | Hides the toolbar and system bars, returns via a discreet button. |
+| **File upload** | Through the system file picker, e.g. for the MeshCentral file manager. |
+| **App lock** | Optional biometric lock with device PIN as a fallback. |
 
-## Sicherheit
+## The foldable navigation fix
 
-Die App ist als Fernwartungskonsole gedacht und entsprechend restriktiv gebaut:
+The central problem this app solves: on the Samsung Fold (and any touch device),
+MeshCentral with the StylishUI theme hides its entire navigation — both the sidebar and
+the top tab bar. The cause is a single check in StylishUI's `custom.js`:
 
-- **Nur HTTPS.** Klartext ist per `networkSecurityConfig` und `usesCleartextTraffic="false"` ausgeschlossen.
-- **Nur System-CAs.** Nachträglich installierte Benutzer-Zertifikate werden ignoriert.
-- **Zertifikatsfehler brechen ab.** `onReceivedSslError` wird bewusst nicht überschrieben — es gibt keinen „Trotzdem fortfahren"-Knopf.
-- **Navigationssperre.** Nur der konfigurierte Host wird im WebView geladen; alles andere geht an den Systembrowser. Ein untergeschobener Link kann die Sitzung also nicht mitnehmen.
-- **Keine JavaScript-Bridge.** `addJavascriptInterface` wird nirgends verwendet.
-- **Kein Backup.** Cookies und Einstellungen landen nicht im Cloud-Backup oder in der Geräteübertragung.
-- **Screenshot-Sperre** (`FLAG_SECURE`) ist standardmäßig aktiv und abschaltbar.
-- **Keine Berechtigungen** außer Internet, Netzwerkstatus und Biometrie. Kamera-, Mikrofon- und Standortanfragen der Webseite werden abgelehnt.
-- Die Serveradresse steht **nicht im Quellcode**, sondern wird beim ersten Start abgefragt.
+```js
+const isMobile = window.matchMedia('(pointer: coarse)').matches
+  || navigator.maxTouchPoints > 1;
+if (isMobile) return;   // skips rendering the navigation
+```
 
-Details und die Anpassung für TLS-inspizierende Proxys: [SECURITY.md](SECURITY.md)
+It classifies **any** touch device as mobile, regardless of screen width, user agent, or
+layout mode — which is why none of those levers help. The check runs once on load and is
+never revisited.
+
+The app registers a `DocumentStartJavaScript` (androidx.webkit) that runs **before** any
+page script and reports `(pointer: coarse)` as `false` and `maxTouchPoints` as `0`.
+StylishUI then treats the device as a desktop and renders the navigation normally. Only
+those two touch queries are spoofed; `prefers-color-scheme` is left untouched, so dark
+mode keeps working.
+
+## Security
+
+Built as a remote-management console, so it is deliberately restrictive:
+
+- **HTTPS only.** Cleartext is disabled via `networkSecurityConfig` and `usesCleartextTraffic="false"`.
+- **System CAs only.** User-installed certificates are ignored.
+- **Certificate errors abort.** `onReceivedSslError` is deliberately not overridden — there is no "proceed anyway" button.
+- **Navigation lock.** Only the configured host loads in the WebView; everything else goes to the system browser. A slipped-in link can't take the session with it.
+- **No JavaScript bridge.** `addJavascriptInterface` is never used. The touch spoof is a one-way `DocumentStartJavaScript`, not a bridge.
+- **No backup.** Cookies and settings are excluded from cloud backup and device transfer.
+- **Screenshot protection** (`FLAG_SECURE`) is on by default and can be turned off.
+- **No permissions** beyond internet, network state and biometrics. Camera, microphone and location requests from the page are denied.
+- The server address is **not in the source**; it is asked for on first launch.
+
+More detail, and how to adapt for TLS-inspecting proxies: [SECURITY.md](SECURITY.md)
 
 ## Installation
 
-Fertige APKs liegen unter [Releases](../../releases). Die APK ist selbstsigniert — beim ersten Mal
-muss die Installation aus unbekannten Quellen erlaubt werden. Prüfsumme gegen die
-mitgelieferte `.sha256`-Datei vergleichen.
+Prebuilt APKs are under [Releases](../../releases). The APK is self-signed — the first
+time you'll need to allow installation from unknown sources. Verify against the bundled
+`.sha256` file.
 
-Beim ersten Start wird die Serveradresse abgefragt, zum Beispiel `mesh.example.org`.
+On first launch you'll be asked for the server address, e.g. `mesh.example.org`.
 
-## Selbst bauen
+## Build it yourself
 
-Voraussetzungen: JDK 21, Android SDK mit Platform 36.
+Requirements: JDK 21, Android SDK with platform 36.
 
 ```bash
 ./gradlew :app:assembleDebug
 ```
 
-Für einen signierten Release-Build eine `keystore.properties` im Projektstamm anlegen
-(steht in `.gitignore`):
+For a signed release build, create a `keystore.properties` in the project root
+(it is in `.gitignore`):
 
 ```properties
 storeFile=release.jks
@@ -69,42 +92,34 @@ keyPassword=...
 ./gradlew :app:assembleRelease
 ```
 
-Ohne Keystore läuft der Release-Build durch, erzeugt aber eine unsignierte APK.
+Without a keystore the release build still runs, but produces an unsigned APK.
 
 ## CI
 
-`.github/workflows/build.yml` baut bei jedem Push auf `main` und veröffentlicht bei einem
-`v*`-Tag ein Release samt APK und Prüfsumme. Für signierte Builds werden diese
-Repository-Secrets erwartet:
+`.github/workflows/build.yml` builds on every push to `main` and publishes a release with
+APK and checksum on a `v*` tag. For signed builds these repository secrets are expected:
 
-| Secret | Inhalt |
+| Secret | Content |
 |---|---|
-| `KEYSTORE_B64` | Keystore, base64-kodiert (`base64 -w0 release.jks`) |
-| `KEYSTORE_PASSWORD` | Keystore-Passwort |
-| `KEY_ALIAS` | Alias des Schlüssels |
-| `KEY_PASSWORD` | Passwort des Schlüssels |
+| `KEYSTORE_B64` | keystore, base64-encoded (`base64 -w0 release.jks`) |
+| `KEYSTORE_PASSWORD` | keystore password |
+| `KEY_ALIAS` | key alias |
+| `KEY_PASSWORD` | key password |
 
-Fehlen die Secrets, baut die CI weiter — dann eben unsigniert.
+If the secrets are missing, CI still builds — just unsigned.
 
-## Technisches
+## Technical
 
 Kotlin, AGP 8.13.2, Gradle 8.14.5, `compileSdk`/`targetSdk` 36, `minSdk` 29.
 
-Die Desktop-/Mobil-Umschaltung stützt sich auf zwei Mechanismen in MeshCentrals `webserver.js`:
-`isMobileBrowser()` prüft schlicht, ob der User-Agent die Zeichenfolge „mobile" enthält, und
-`getRenderPage()` erlaubt mit `?mobile=1` bzw. `?mobile=0` eine ausdrückliche Überschreibung.
-Die App setzt beides gleichzeitig — der Parameter wirkt auf die angeforderte Seite, der
-User-Agent auf alle Folgeanfragen ohne Parameter.
+## Known limitations
 
-## Bekannte Grenzen
+- **Downloads from the MeshCentral file manager** are generated as `blob:` URLs. WebViews
+  can't hand those to the Android DownloadManager; the app points this out and offers
+  "Open in browser". Ordinary `https` downloads (agent installers and the like) work.
+- Switching appearance recreates the activity. The session persists via cookies, but the
+  page reloads.
 
-- **Downloads aus dem MeshCentral-Dateimanager** werden als `blob:`-URL erzeugt. WebViews können
-  solche URLs nicht an den Android-DownloadManager übergeben; die App weist darauf hin und
-  bietet „Im Browser öffnen" an. Gewöhnliche `https`-Downloads (Agent-Installer und Ähnliches)
-  funktionieren.
-- Ein Wechsel des Erscheinungsbilds erzeugt die Activity neu. Die Sitzung bleibt über die
-  Cookies erhalten, die Seite wird aber neu geladen.
+## License
 
-## Lizenz
-
-[Apache License 2.0](LICENSE) — dieselbe Lizenz wie MeshCentral.
+[Apache License 2.0](LICENSE) — the same license as MeshCentral.
