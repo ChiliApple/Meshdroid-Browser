@@ -23,6 +23,7 @@ Erscheinungsbild, ausgelegt auf Foldables.
 | **Automatik-Ansicht** | Ab 600dp Breite wird die Desktop-Ansicht vorgeschlagen — nie erzwungen, immer per Rückfrage. |
 | **Vollbild** | Blendet Toolbar und Systemleisten aus, Rückkehr über eine dezente Schaltfläche. |
 | **Datei-Upload** | Über den System-Dateiauswahldialog, z. B. für den MeshCentral-Dateimanager. |
+| **Vollbild** merken | Aus / letzten Zustand merken / immer im Vollbild starten — gilt global. |
 | **App-Sperre** | Optionale biometrische Sperre mit Geräte-PIN als Rückfallebene. |
 
 ## Sicherheit

@@ -167,6 +167,41 @@
 
             <TextView
                 style="@style/SectionHeader"
+                android:text="@string/settings_fullscreen" />
+
+            <RadioGroup
+                android:id="@+id/fullscreenGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/fs_off"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fullscreen_off" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/fs_last"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fullscreen_last" />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/fs_always"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fullscreen_always" />
+            </RadioGroup>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_fullscreen_summary"
+                android:textAppearance="?attr/textAppearanceBodySmall" />
+
+            <TextView
+                style="@style/SectionHeader"
                 android:text="@string/settings_security" />
 
             <com.google.android.material.materialswitch.MaterialSwitch

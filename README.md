@@ -22,6 +22,7 @@ WebView with toggles for desktop/mobile view and appearance, built for foldables
 | **Navigation always visible** | StylishUI hides all navigation on touch devices; the app neutralises that so the navigation shows on the Fold too (see below). |
 | **Full screen** | Hides the toolbar and system bars, returns via a discreet button. |
 | **File upload** | Through the system file picker, e.g. for the MeshCentral file manager. |
+| **Full screen** memory | Off / remember last state / always start in full screen — applies globally. |
 | **App lock** | Optional biometric lock with device PIN as a fallback. |
 
 ## The foldable navigation fix

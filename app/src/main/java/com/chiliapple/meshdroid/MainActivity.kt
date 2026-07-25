@@ -97,6 +97,11 @@ class MainActivity : AppCompatActivity() {
         if (binding.webView.url == null) {
             loadHome()
         }
+
+        // Vollbild gemaess gespeicherter Einstellung anwenden (Aus / Merken / Immer).
+        if (savedInstanceState == null && prefs.startInFullscreen) {
+            binding.root.post { setFullscreen(true) }
+        }
     }
 
     override fun onStart() {
@@ -441,6 +446,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setFullscreen(enabled: Boolean) {
         isFullscreen = enabled
+        prefs.lastFullscreen = enabled
         val controller = WindowInsetsControllerCompat(window, binding.root)
         if (enabled) {
             binding.appBar.visibility = View.GONE

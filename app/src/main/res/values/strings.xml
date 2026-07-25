@@ -72,6 +72,11 @@
     <string name="settings_desktop_width_summary">MeshCentral collapses its navigation bar on narrow viewports. A larger value shows more, at smaller text. Applies on the next reload.</string>
     <string name="settings_theme">Appearance</string>
     <string name="settings_theme_summary">MeshCentral follows the app appearance through prefers-color-scheme.</string>
+    <string name="settings_fullscreen">Full screen</string>
+    <string name="fullscreen_off">Off</string>
+    <string name="fullscreen_last">Remember last state</string>
+    <string name="fullscreen_always">Always start in full screen</string>
+    <string name="settings_fullscreen_summary">Applies globally, including inside device sessions.</string>
     <string name="settings_security">Security</string>
     <string name="settings_screen_protection">Block screenshots</string>
     <string name="settings_screen_protection_summary">Prevents screenshots and hides the content in the recent apps overview.</string>

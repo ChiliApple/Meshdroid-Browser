@@ -68,6 +68,11 @@
     <string name="settings_desktop_width_summary">MeshCentral klappt seine Navigationsleiste bei schmalem Viewport ein. Ein größerer Wert zeigt mehr, dafür kleinere Schrift. Wirkt beim nächsten Neuladen.</string>
     <string name="settings_theme">Erscheinungsbild</string>
     <string name="settings_theme_summary">MeshCentral übernimmt das Erscheinungsbild der App über prefers-color-scheme.</string>
+    <string name="settings_fullscreen">Vollbild</string>
+    <string name="fullscreen_off">Aus</string>
+    <string name="fullscreen_last">Letzten Zustand merken</string>
+    <string name="fullscreen_always">Immer im Vollbild starten</string>
+    <string name="settings_fullscreen_summary">Gilt global, auch innerhalb von Geräte-Sitzungen.</string>
     <string name="settings_security">Sicherheit</string>
     <string name="settings_screen_protection">Screenshots blockieren</string>
     <string name="settings_screen_protection_summary">Verhindert Screenshots und blendet den Inhalt in der App-Übersicht aus.</string>

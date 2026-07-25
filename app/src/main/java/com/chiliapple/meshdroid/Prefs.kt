@@ -19,6 +19,20 @@ enum class ViewMode {
     }
 }
 
+/**
+ * Startverhalten des Vollbildmodus.
+ * OFF  - startet normal, Vollbild ist eine reine Sitzungsaktion.
+ * LAST - der letzte Zustand wird gemerkt und beim Start wiederhergestellt.
+ * ALWAYS - startet immer im Vollbild.
+ */
+enum class FullscreenMode {
+    OFF, LAST, ALWAYS;
+
+    companion object {
+        fun fromKey(key: String?): FullscreenMode = entries.firstOrNull { it.name == key } ?: LAST
+    }
+}
+
 enum class ThemeMode(val nightMode: Int) {
     SYSTEM(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM),
     LIGHT(AppCompatDelegate.MODE_NIGHT_NO),
@@ -60,6 +74,27 @@ class Prefs(context: Context) {
         get() = sp.getInt(KEY_DESKTOP_WIDTH, DEFAULT_DESKTOP_WIDTH)
         set(value) = sp.edit().putInt(KEY_DESKTOP_WIDTH, value).apply()
 
+    /** Startverhalten des Vollbildmodus (Aus / Merken / Immer). */
+    var fullscreenMode: FullscreenMode
+        get() = FullscreenMode.fromKey(sp.getString(KEY_FULLSCREEN_MODE, null))
+        set(value) = sp.edit().putString(KEY_FULLSCREEN_MODE, value.name).apply()
+
+    /** Zuletzt aktiver Vollbildzustand - nur fuer den Modus "Merken" relevant. */
+    var lastFullscreen: Boolean
+        get() = sp.getBoolean(KEY_LAST_FULLSCREEN, false)
+        set(value) = sp.edit().putBoolean(KEY_LAST_FULLSCREEN, value).apply()
+
+    /**
+     * Ob beim Start in den Vollbild gewechselt werden soll - aus Modus und
+     * gemerktem Zustand abgeleitet.
+     */
+    val startInFullscreen: Boolean
+        get() = when (fullscreenMode) {
+            FullscreenMode.OFF -> false
+            FullscreenMode.ALWAYS -> true
+            FullscreenMode.LAST -> lastFullscreen
+        }
+
     /** FLAG_SECURE: blockiert Screenshots und Vorschau in der App-Uebersicht. */
     var screenProtection: Boolean
         get() = sp.getBoolean(KEY_SCREEN_PROTECTION, true)
@@ -80,6 +115,8 @@ class Prefs(context: Context) {
         private const val KEY_THEME_MODE = "theme_mode"
         private const val KEY_SCREEN_PROTECTION = "screen_protection"
         private const val KEY_APP_LOCK = "app_lock"
+        private const val KEY_FULLSCREEN_MODE = "fullscreen_mode"
+        private const val KEY_LAST_FULLSCREEN = "last_fullscreen"
         private const val KEY_DESKTOP_WIDTH = "desktop_width"
 
         const val DEFAULT_DESKTOP_WIDTH = 1280

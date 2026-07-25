@@ -38,6 +38,7 @@ class SettingsActivity : AppCompatActivity() {
 
         bindServerUrl()
         bindViewMode()
+        bindFullscreen()
         bindDesktopWidth()
         bindThemeMode()
         bindSwitches()
@@ -87,6 +88,23 @@ class SettingsActivity : AppCompatActivity() {
                 R.id.view_desktop -> ViewMode.DESKTOP
                 R.id.view_mobile -> ViewMode.MOBILE
                 else -> ViewMode.AUTO
+            }
+        }
+    }
+
+    private fun bindFullscreen() {
+        binding.fullscreenGroup.check(
+            when (prefs.fullscreenMode) {
+                FullscreenMode.OFF -> R.id.fs_off
+                FullscreenMode.ALWAYS -> R.id.fs_always
+                FullscreenMode.LAST -> R.id.fs_last
+            }
+        )
+        binding.fullscreenGroup.setOnCheckedChangeListener { _, checkedId ->
+            prefs.fullscreenMode = when (checkedId) {
+                R.id.fs_off -> FullscreenMode.OFF
+                R.id.fs_always -> FullscreenMode.ALWAYS
+                else -> FullscreenMode.LAST
             }
         }
     }
