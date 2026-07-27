@@ -202,7 +202,8 @@ class MainActivity : AppCompatActivity() {
 
         CookieManager.getInstance().apply {
             setAcceptCookie(true)
-            setAcceptThirdPartyCookies(this@with, false)
+            val allowTpc = prefs.hasAccessHost && prefs.allowAccessCookies
+            setAcceptThirdPartyCookies(this@with, allowTpc)
         }
 
         // Touch-Spoof VOR dem ersten Laden registrieren, damit StylishUIs
@@ -216,8 +217,8 @@ class MainActivity : AppCompatActivity() {
                 request: WebResourceRequest
             ): Boolean {
                 val url = request.url.toString()
-                return if (WebUrl.isSameServer(url, prefs.serverUrl)) {
-                    false // im WebView laden
+                return if (WebUrl.isAllowedNavigationHost(url, prefs.serverUrl, prefs.accessAuthHost)) {
+                    false // im WebView laden (Server ODER konfigurierter Access-Host)
                 } else {
                     openExternally(request.url)
                     true

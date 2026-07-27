@@ -242,6 +242,34 @@ object WebUrl {
      * Erlaubt sind ausschliesslich https und exakt der konfigurierte Host inklusive
      * Port. Subdomains gelten bewusst als fremd.
      */
+    /**
+     * Normalisiert eine Host-Eingabe (z. B. fuers Access-Feld): entfernt Schema,
+     * Pfad und Whitespace, gibt nur den reinen Host zurueck - oder null.
+     */
+    fun normalizeHost(input: String): String? {
+        var h = input.trim()
+        if (h.isEmpty()) return null
+        h = h.removePrefix("https://").removePrefix("http://")
+        h = h.substringBefore('/').substringBefore(':').trim()
+        if (h.isBlank() || !h.contains('.')) return null
+        return h.lowercase()
+    }
+
+    /**
+     * Navigations-Weiche: darf [url] im WebView geladen werden? Das ist der
+     * konfigurierte Server ODER exakt der optionale Access-Host (nur fuer die
+     * Top-Level-Navigation). Download-Freigabe und Session-Scoping nutzen
+     * bewusst weiterhin das strikte isSameServer().
+     */
+    fun isAllowedNavigationHost(url: String, serverUrl: String, accessHost: String?): Boolean {
+        if (isSameServer(url, serverUrl)) return true
+        if (accessHost.isNullOrBlank()) return false
+        val target = runCatching { Uri.parse(url) }.getOrNull() ?: return false
+        if (!target.scheme.equals("https", ignoreCase = true)) return false
+        val host = target.host ?: return false
+        return host.equals(accessHost, ignoreCase = true)
+    }
+
     fun isSameServer(url: String, serverUrl: String): Boolean {
         val target = runCatching { Uri.parse(url) }.getOrNull() ?: return false
         val base = runCatching { Uri.parse(serverUrl) }.getOrNull() ?: return false

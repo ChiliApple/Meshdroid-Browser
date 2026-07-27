@@ -53,6 +53,26 @@ class Prefs(context: Context) {
         get() = sp.getString(KEY_SERVER_URL, "").orEmpty()
         set(value) = sp.edit().putString(KEY_SERVER_URL, value).apply()
 
+    /**
+     * Optionaler Cloudflare-Access-Host (Team-Domain, z. B. "team.cloudflareaccess.com").
+     * Leer = kein Access, altes Verhalten. Nur der Host, ohne Schema.
+     */
+    var accessAuthHost: String
+        get() = sp.getString(KEY_ACCESS_HOST, "").orEmpty().trim()
+        set(value) = sp.edit().putString(KEY_ACCESS_HOST, value.trim()).apply()
+
+    /**
+     * Ob Third-Party-Cookies zugelassen werden. Nur fuer den Access-OAuth-Redirect
+     * ueber zwei Hosts relevant. Standardmaessig aus (Haertung). Greift ohnehin nur,
+     * wenn ein Access-Host gesetzt ist.
+     */
+    var allowAccessCookies: Boolean
+        get() = sp.getBoolean(KEY_ACCESS_COOKIES, false)
+        set(value) = sp.edit().putBoolean(KEY_ACCESS_COOKIES, value).apply()
+
+    val hasAccessHost: Boolean
+        get() = accessAuthHost.isNotBlank()
+
     var viewMode: ViewMode
         get() = ViewMode.fromKey(sp.getString(KEY_VIEW_MODE, null))
         set(value) = sp.edit().putString(KEY_VIEW_MODE, value.name).apply()
@@ -115,6 +135,8 @@ class Prefs(context: Context) {
         private const val KEY_THEME_MODE = "theme_mode"
         private const val KEY_SCREEN_PROTECTION = "screen_protection"
         private const val KEY_APP_LOCK = "app_lock"
+        private const val KEY_ACCESS_HOST = "access_auth_host"
+        private const val KEY_ACCESS_COOKIES = "allow_access_cookies"
         private const val KEY_FULLSCREEN_MODE = "fullscreen_mode"
         private const val KEY_LAST_FULLSCREEN = "last_fullscreen"
         private const val KEY_DESKTOP_WIDTH = "desktop_width"

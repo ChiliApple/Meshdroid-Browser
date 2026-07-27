@@ -23,6 +23,7 @@ WebView with toggles for desktop/mobile view and appearance, built for foldables
 | **Full screen** | Hides the toolbar and system bars, returns via a discreet button. |
 | **File upload** | Through the system file picker, e.g. for the MeshCentral file manager. |
 | **Full screen** memory | Off / remember last state / always start in full screen — applies globally. |
+| **Cloudflare Access** | Optional: keeps the Access email-OTP login inside the app instead of bouncing to the system browser. |
 | **App lock** | Optional biometric lock with device PIN as a fallback. |
 
 ## The foldable navigation fix

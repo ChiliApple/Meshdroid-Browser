@@ -37,6 +37,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         bindServerUrl()
+        bindAccess()
         bindViewMode()
         bindFullscreen()
         bindDesktopWidth()
@@ -73,6 +74,45 @@ class SettingsActivity : AppCompatActivity() {
             )
             finish()
         }
+    }
+
+    private fun bindAccess() {
+        binding.accessInput.setText(prefs.accessAuthHost)
+        updateAccessCookieVisibility()
+
+        binding.accessSaveButton.setOnClickListener {
+            val raw = binding.accessInput.text?.toString().orEmpty().trim()
+            if (raw.isEmpty()) {
+                prefs.accessAuthHost = ""
+                binding.accessInputLayout.error = null
+                updateAccessCookieVisibility()
+                Toast.makeText(this, R.string.settings_saved, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val host = WebUrl.normalizeHost(raw)
+            if (host == null) {
+                binding.accessInputLayout.error = getString(R.string.settings_access_invalid)
+                return@setOnClickListener
+            }
+            binding.accessInputLayout.error = null
+            prefs.accessAuthHost = host
+            binding.accessInput.setText(host)
+            updateAccessCookieVisibility()
+            Toast.makeText(this, R.string.settings_saved, Toast.LENGTH_SHORT).show()
+        }
+
+        binding.accessCookiesSwitch.isChecked = prefs.allowAccessCookies
+        binding.accessCookiesSwitch.setOnCheckedChangeListener { _, checked ->
+            prefs.allowAccessCookies = checked
+            Toast.makeText(this, R.string.settings_restart_hint, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    /** Cookie-Schalter nur zeigen, wenn ein Access-Host gesetzt ist. */
+    private fun updateAccessCookieVisibility() {
+        val visible = prefs.hasAccessHost
+        binding.accessCookiesSwitch.visibility = if (visible) android.view.View.VISIBLE else android.view.View.GONE
+        binding.accessCookiesSummary.visibility = if (visible) android.view.View.VISIBLE else android.view.View.GONE
     }
 
     private fun bindViewMode() {

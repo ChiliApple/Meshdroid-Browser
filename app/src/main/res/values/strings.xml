@@ -72,6 +72,12 @@
     <string name="settings_desktop_width_summary">MeshCentral collapses its navigation bar on narrow viewports. A larger value shows more, at smaller text. Applies on the next reload.</string>
     <string name="settings_theme">Appearance</string>
     <string name="settings_theme_summary">MeshCentral follows the app appearance through prefers-color-scheme.</string>
+    <string name="settings_access_invalid">Please enter a valid host, e.g. team.cloudflareaccess.com</string>
+    <string name="settings_access">Cloudflare Access</string>
+    <string name="settings_access_hint">Access domain (optional)</string>
+    <string name="settings_access_helper">e.g. team.cloudflareaccess.com — host only, no https://</string>
+    <string name="settings_access_cookies">Allow cookies for Access</string>
+    <string name="settings_access_cookies_summary">Only needed if the Access login gets stuck in a redirect loop. Applies to the whole WebView (Android cannot scope it per host), so leave off unless required.</string>
     <string name="settings_fullscreen">Full screen</string>
     <string name="fullscreen_off">Off</string>
     <string name="fullscreen_last">Remember last state</string>

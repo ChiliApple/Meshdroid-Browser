@@ -24,6 +24,7 @@ Erscheinungsbild, ausgelegt auf Foldables.
 | **Vollbild** | Blendet Toolbar und Systemleisten aus, Rückkehr über eine dezente Schaltfläche. |
 | **Datei-Upload** | Über den System-Dateiauswahldialog, z. B. für den MeshCentral-Dateimanager. |
 | **Vollbild** merken | Aus / letzten Zustand merken / immer im Vollbild starten — gilt global. |
+| **Cloudflare Access** | Optional: hält den Access-E-Mail-OTP-Login in der App, statt in den Systembrowser zu springen. |
 | **App-Sperre** | Optionale biometrische Sperre mit Geräte-PIN als Rückfallebene. |
 
 ## Sicherheit

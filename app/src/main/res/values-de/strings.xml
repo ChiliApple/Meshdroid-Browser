@@ -68,6 +68,12 @@
     <string name="settings_desktop_width_summary">MeshCentral klappt seine Navigationsleiste bei schmalem Viewport ein. Ein größerer Wert zeigt mehr, dafür kleinere Schrift. Wirkt beim nächsten Neuladen.</string>
     <string name="settings_theme">Erscheinungsbild</string>
     <string name="settings_theme_summary">MeshCentral übernimmt das Erscheinungsbild der App über prefers-color-scheme.</string>
+    <string name="settings_access_invalid">Bitte einen gültigen Host eingeben, z. B. team.cloudflareaccess.com</string>
+    <string name="settings_access">Cloudflare Access</string>
+    <string name="settings_access_hint">Access-Domain (optional)</string>
+    <string name="settings_access_helper">z. B. team.cloudflareaccess.com — nur Host, ohne https://</string>
+    <string name="settings_access_cookies">Cookies für Access zulassen</string>
+    <string name="settings_access_cookies_summary">Nur nötig, falls der Access-Login in einer Redirect-Schleife hängt. Gilt für den ganzen WebView (Android kann das nicht pro Host trennen) — daher aus lassen, wenn nicht gebraucht.</string>
     <string name="settings_fullscreen">Vollbild</string>
     <string name="fullscreen_off">Aus</string>
     <string name="fullscreen_last">Letzten Zustand merken</string>
